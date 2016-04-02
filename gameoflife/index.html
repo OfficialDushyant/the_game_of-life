@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+
+<html xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+    <title>The Game of Life </title>
+
+    <style>
+        body {
+            padding: 0px;
+            margin: 0px;
+            background-color: #334466;
+            color: white;
+            font: 14px 'Arial' sans-serif;
+        }
+
+        h1 {
+            width: 960px;
+            margin: auto;
+            font-size: 1.4em;
+            padding: 10px 0px;
+        }
+
+        .mainContent {
+            color: black;
+            margin: 0px auto;
+            width: 960px;
+            background-color: white;
+            border-radius: 10px;
+            text-align: center;
+            line-height: 500px;
+        }
+
+        #gameCanvas {
+            border: 1px solid #ccc;
+            vertical-align: middle;
+            cursor: pointer;
+        }
+
+        .rules {
+            line-height: normal;
+            text-align: left;
+            padding: 0px 10px 20px;
+            float: left;
+        }
+
+        .controls {
+            float: right;
+            line-height: normal;
+        }
+
+            .controls button {
+                min-width: 100px;
+                height: 25px;
+            }
+    </style>
+
+<!--[if gte mso 9]><xml>
+<mso:CustomDocumentProperties>
+<mso:IsMyDocuments msdt:dt="string">1</mso:IsMyDocuments>
+</mso:CustomDocumentProperties>
+</xml><![endif]-->
+</head>
+<body>
+    <h1>
+        The Game of Life
+    </h1>
+    <div class="mainContent">
+        <!-- Canvas goes here -->
+        <canvas id="gameCanvas" width="800" height="450">
+		Your browser does not support HTML5
+		</canvas>
+        <section class="rules">
+            <h3>
+                Live Cell Rules
+            </h3>
+            <ul>
+                <li>Any cell with one or no live neighbors dies</li>
+                <li>Any cell with four or more live neighbors dies</li>
+                <li>Any cell with two or three live neighbors survives</li>
+            </ul>
+            <h3>
+                Dead Cell Rules
+            </h3>
+            <ul>
+                <li>Dead cells with three live neighbors become alive.</li>
+            </ul>
+        </section>
+        <section class="controls">
+            <button onClick="addRendomeCells()">Randomize</button>
+            <button id="btnStart" onClick="startGame()">Start</button>
+            <button onClick="clearGame()">Clear</button>
+        </section>
+        <!-- Clear the floats to expand the background-->
+        <div style="clear:both;"></div>
+    </div>
+
+    <script src="js/cell.js"></script>
+    <script src="js/grid.js"></script>
+    <script src="js/lifeGame.js"></script>
+
+    <script>
+        var CELL_DIMENSION = 10;
+        var WORLD_WIDTH = 800;
+        var WORLD_HEIGHT = 450;
+
+        window.onload = init;
+        var game, canvas;
+		var interval = -1,startButton;
+        function init() {
+			canvas = document.getElementById('gameCanvas');
+			startButton = document.getElementById('btnStart');
+			game = new LifeGame(WORLD_WIDTH, WORLD_HEIGHT,CELL_DIMENSION,canvas);
+			game.draw();
+			canvas.addEventListener("click", onCanvasClick);
+			//setInterval(game.update , 400);
+			
+        }
+		function onCanvasClick(evt) { var rect = canvas.getBoundingClientRect();
+ 									  var cellX = Math.floor((evt.clientX - rect.left) / CELL_DIMENSION ); 
+									  var cellY = Math.floor((evt.clientY - rect.top) / CELL_DIMENSION);
+										game.addCell(cellX, cellY); game.draw(); }
+            
+		function addRendomeCells(){
+			game.addRandomCells(100);
+			game.draw();
+		}
+		
+		function startGame(){
+			if(interval == -1){interval = setInterval(game.update, 300); startButton.innerHTML = "Pause"; } 
+			else{
+			 pauseGame();
+			}
+	}
+function clearGame() { pauseGame(); game.clear(); game.draw(); }
+
+function pauseGame() { 
+	if (interval != -1) { 
+		clearInterval(interval); interval = -1; 
+	}
+	
+	startButton.innerHTML = "Start"; 
+}
+				
+    </script>
+</body>
+</html>
